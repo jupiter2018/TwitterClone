@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from TwitterClone.tweets.models import Tweet
 from TwitterClone.tweets.forms import TweetForm
 from TwitterClone.twitterusers.models import TwitterUser
+from TwitterClone.notifications.models import Notification
 import re
 
 
@@ -19,15 +20,18 @@ def tweet_view(request):
                 content = content
                    
             )
-            # if "@" in content:
-            #     result = re.findall(my_regex, content)
-            #     for curresult in result:
-            #         #get twitteruser 
-            #         Notification.objects.create(
-            #             tweetfrom = new_tweet,
-            #             tweetfor = 
+            if "@" in content:
+                result = re.findall(my_regex, content)
+                print(result)
+                for curresult in result:
+                    # get twitteruser 
+                    curtwitteruser = TwitterUser.objects.get(user=User.objects.get(username = curresult))
+                    if(curtwitteruser):
+                        Notification.objects.create(
+                            tweetfrom = new_tweet,
+                            tweetfor = curtwitteruser
 
-            #         )
+                        )
             
             return HttpResponseRedirect(reverse('profile'))
     else:

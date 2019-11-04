@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from TwitterClone.tweets.models import Tweet
+from TwitterClone.twitterusers.models import TwitterUser
 
 class Notification(models.Model):
      tweetfrom = models.ForeignKey(Tweet,on_delete=models.CASCADE)

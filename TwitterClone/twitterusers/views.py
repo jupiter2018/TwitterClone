@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from TwitterClone.twitterusers.models import TwitterUser
 from TwitterClone.tweets.models import Tweet
+from TwitterClone.notifications.models import Notification
 from TwitterClone.authentication.forms import LoginForm
 from itertools import chain
 
@@ -17,9 +18,13 @@ def profile_view(request):
     followTweets = []
     peopleToFollow = []
     tweetsnewlist = []
+    notifications = 0
     if request.user.is_authenticated:
         username = request.user.username
         userdata = TwitterUser.objects.filter(user=request.user)
+        curuser = TwitterUser.objects.get(user=request.user)
+        all_notifications = Notification.objects.filter(tweetfor=curuser)
+        notifications = all_notifications.count
         allTwitterUsers = TwitterUser.objects.all()
         userTweets = Tweet.objects.filter(author=request.user)
         logged_in_user_tweet_count = userTweets.count
@@ -40,7 +45,7 @@ def profile_view(request):
                 tweetsnewlist.append(curtweet)
         tweetsnewlist.sort(key=lambda present_tweet: present_tweet.created)
         print(followTweets)
-        return render(request,"profile.html",{'userprofile':username,'following':following, 'followTweets':tweetsnewlist,'peopleToFollow':peopleToFollow,'logged_in_user_tweet_count':logged_in_user_tweet_count})
+        return render(request,"profile.html",{'userprofile':username,'following':following, 'followTweets':tweetsnewlist,'peopleToFollow':peopleToFollow,'logged_in_user_tweet_count':logged_in_user_tweet_count,'notifications':notifications})
     else:
         
         form = LoginForm()
